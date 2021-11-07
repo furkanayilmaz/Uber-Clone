@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import tw from 'tailwind-styled-components'
 import { carList } from '../data/carList'
 import Link from 'next/link'
+import { confirmPasswordReset } from '@firebase/auth';
 
 function RideSelector({pickupCoordinates, dropoffCoordinates}) {
     const [rideDuration, setRideDuration] = useState(0);
@@ -11,7 +12,14 @@ function RideSelector({pickupCoordinates, dropoffCoordinates}) {
         rideDuration = fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${pickupCoordinates[0]},${pickupCoordinates[1]};${dropoffCoordinates[0]},${dropoffCoordinates[1]}?access_token=pk.eyJ1IjoiZnVya2FuYXlpbG1heiIsImEiOiJja210dW12NjgwdXRxMndtd250bzVtY2JvIn0.9jbjlUaZhdAoCJ8K1_WNpQ`)
         .then(res => res.json())
         .then(data => {
-            setRideDuration(data.routes[0].duration / 100);
+            console.log(data);
+            if(data.routes.length > 0) {
+                setRideDuration(data.routes[0].duration / 100);
+            } else {
+                setRideDuration(0);
+            }
+        }).catch((e) => {
+            console.log(e);
         })
     }, [pickupCoordinates, dropoffCoordinates])
     
